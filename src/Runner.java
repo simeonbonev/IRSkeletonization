@@ -8,10 +8,20 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import java.awt.GridLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.Cursor;
+import java.awt.Insets;
+import java.awt.Dimension;
 
 public class Runner extends JFrame implements ActionListener {
 	private BufferedImage originalImage;
@@ -27,29 +37,82 @@ public class Runner extends JFrame implements ActionListener {
 	private JButton binarizeButton;
 
 	Runner(String stringUrl) throws IOException {
+		setPreferredSize(new Dimension(800, 500));
+		getContentPane().setBackground(Color.WHITE);
 		URL url = new URL(stringUrl);
-		setLayout(new FlowLayout());
+
 		originalImage = ImageIO.read(url);
 		originalImageIcon = new ImageIcon(originalImage);
-		originalJLabel = new JLabel(originalImageIcon);
-		add(originalJLabel);
 
 		editedImage = ImageIO.read(url);
 		editedImageIcon = new ImageIcon(editedImage);
-		editedJLabel = new JLabel(editedImageIcon);
-		add(editedJLabel);
 
 		processButton = new JButton("Process");
+		processButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		processButton.setMargin(new Insets(10, 10, 10, 10));
+		processButton.setForeground(Color.WHITE);
+		processButton.setOpaque(true);
+		processButton.setBackground(new Color(204, 0, 51));
+		processButton.setBorder(new EmptyBorder(7, 20, 7, 20));
 		processButton.addActionListener(this);
-		add(processButton);
 
 		saveButton = new JButton("Save");
+		saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		saveButton.setMargin(new Insets(10, 10, 10, 10));
+		saveButton.setForeground(Color.WHITE);
+		saveButton.setBackground(new Color(51, 153, 102));
+		saveButton.setOpaque(true);
+		saveButton.setBorder(new EmptyBorder(7, 20, 7, 20));
 		saveButton.addActionListener(this);
-		add(saveButton);
-		
+
 		binarizeButton = new JButton("Binarize");
+		binarizeButton.setMargin(new Insets(10, 10, 10, 10));
+		binarizeButton.setOpaque(true);
+		binarizeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		binarizeButton.setBorder(new EmptyBorder(7, 20, 7, 20));
+		binarizeButton.setBackground(new Color(30, 144, 255));
+		binarizeButton.setForeground(Color.WHITE);
 		binarizeButton.addActionListener(this);
-		add(binarizeButton);
+		originalJLabel = new JLabel(originalImageIcon);
+		originalJLabel.setText("Original image");
+		editedJLabel = new JLabel(editedImageIcon);
+		editedJLabel.setText("Edited image");
+		editedJLabel.setToolTipText("Edited image");
+		GroupLayout groupLayout = new GroupLayout(getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(binarizeButton)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(processButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+							.addGap(18)
+							.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)))
+					.addGap(450))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(binarizeButton)
+						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+							.addComponent(saveButton)
+							.addComponent(processButton)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+						.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		getContentPane().setLayout(groupLayout);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
@@ -62,7 +125,7 @@ public class Runner extends JFrame implements ActionListener {
 		Runner gui;
 		try {
 			gui = new Runner(
-					"http://dsc.carsifu.com/wp-content/uploads/2014/12/Merc-CapaCity-L-main01.jpg");
+					"http://us.123rf.com/450wm/kroomjai/kroomjai1110/kroomjai111000022/10797656-number-1-sunflower-isolate-on-white-background.jpg");
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -84,8 +147,8 @@ public class Runner extends JFrame implements ActionListener {
 	}
 
 	private void binarize() {
-		// TODO Auto-generated method stub
-		
+		Binarizator binarizator = new Binarizator(editedImage);
+		binarizator.binarize();
 	}
 
 	private void saveImage() {
