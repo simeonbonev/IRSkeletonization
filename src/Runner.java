@@ -13,12 +13,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridLayout;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.Dimension;
@@ -35,6 +39,7 @@ public class Runner extends JFrame implements ActionListener {
 	private JButton processButton;
 	private JButton saveButton;
 	private JButton binarizeButton;
+	private JButton blurButton;
 
 	Runner(String stringUrl) throws IOException {
 		setPreferredSize(new Dimension(800, 500));
@@ -78,6 +83,15 @@ public class Runner extends JFrame implements ActionListener {
 		editedJLabel = new JLabel(editedImageIcon);
 		editedJLabel.setText("Edited image");
 		editedJLabel.setToolTipText("Edited image");
+		
+		blurButton = new JButton("Blur");
+		blurButton.setBorder(new EmptyBorder(7, 32, 7, 32));
+		blurButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		blurButton.setForeground(Color.WHITE);
+		blurButton.setBackground(new Color(255, 153, 0));
+		blurButton.setOpaque(true);
+		blurButton.addActionListener(this);
+		
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -85,31 +99,33 @@ public class Runner extends JFrame implements ActionListener {
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+							.addGap(18))
+						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(binarizeButton)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(blurButton)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(processButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-							.addGap(18)
-							.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)))
-					.addGap(450))
+							.addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
+					.addGap(18)
+					.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(binarizeButton)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(saveButton)
-							.addComponent(processButton)))
+						.addComponent(blurButton)
+						.addComponent(processButton)
+						.addComponent(saveButton))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-						.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE))
+						.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		getContentPane().setLayout(groupLayout);
@@ -137,11 +153,14 @@ public class Runner extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == processButton) {
 			toGrayscale();
+			Filters.blurImage(new BufferedImage(editedImage.getColorModel(), editedImage.copyData(null), editedImage.isAlphaPremultiplied(), null), editedImage);
 			binarize();
 		} else if (e.getSource() == saveButton) {
 			saveImage();
 		} else if (e.getSource() == binarizeButton) {
 			binarize();
+		} else if (e.getSource() == blurButton) {
+			Filters.blurImage(new BufferedImage(editedImage.getColorModel(), editedImage.copyData(null), editedImage.isAlphaPremultiplied(), null), editedImage);
 		}
 		repaint();
 	}
@@ -159,6 +178,7 @@ public class Runner extends JFrame implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		JOptionPane.showMessageDialog(this, "Image saved.");
 	}
 
 	private void toGrayscale() {
@@ -173,5 +193,4 @@ public class Runner extends JFrame implements ActionListener {
 			}
 		}
 	}
-
 }
