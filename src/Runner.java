@@ -26,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 
 public class Runner extends JFrame implements ActionListener {
 	private BufferedImage originalImage;
@@ -43,6 +44,7 @@ public class Runner extends JFrame implements ActionListener {
 
 	Runner(String stringUrl) throws IOException {
 		setPreferredSize(new Dimension(800, 500));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("skeletonization.png"));
 		getContentPane().setBackground(Color.WHITE);
 		URL url = new URL(stringUrl);
 
@@ -155,6 +157,14 @@ public class Runner extends JFrame implements ActionListener {
 			toGrayscale();
 			Filters.blurImage(new BufferedImage(editedImage.getColorModel(), editedImage.copyData(null), editedImage.isAlphaPremultiplied(), null), editedImage);
 			binarize();
+			ImageUtils.invert(editedImage);
+			DistanceTransform.doTransform(editedImage, new Manhattan());
+			try {
+				ImageIO.write(editedImage, "jpg", new File("InJFRAME.jpg"));
+			} catch (IOException ioe) {
+				// TODO Auto-generated catch block
+				ioe.printStackTrace();
+			}
 		} else if (e.getSource() == saveButton) {
 			saveImage();
 		} else if (e.getSource() == binarizeButton) {
