@@ -15,10 +15,8 @@ public class DistanceTransform {
 		int counter = 0;
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
-				if (matrix[i][j] < 1) {
-					// Background pixel
-					continue;
-				} else {
+				if (matrix[i][j] > 0) {
+					// Foreground pixel
 					matrix[i][j] = getClosestBackgroundPixel(i, j, matrix, w,
 							h, distance);
 					System.out.println(++counter);

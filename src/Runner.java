@@ -143,7 +143,7 @@ public class Runner extends JFrame implements ActionListener {
 		Runner gui;
 		try {
 			gui = new Runner(
-					"http://us.123rf.com/450wm/kroomjai/kroomjai1110/kroomjai111000022/10797656-number-1-sunflower-isolate-on-white-background.jpg");
+					"http://alphabetstencils.org/craft-letter-stencils/3/craft-letter-a.jpg");
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -158,7 +158,8 @@ public class Runner extends JFrame implements ActionListener {
 			Filters.blurImage(new BufferedImage(editedImage.getColorModel(), editedImage.copyData(null), editedImage.isAlphaPremultiplied(), null), editedImage);
 			binarize();
 			ImageUtils.invert(editedImage);
-			DistanceTransform.doTransform(editedImage, new Manhattan());
+			//DistanceTransform.doTransform(editedImage, new Manhattan());
+			MAT.doTransform(editedImage);
 			try {
 				ImageIO.write(editedImage, "jpg", new File("InJFRAME.jpg"));
 			} catch (IOException ioe) {

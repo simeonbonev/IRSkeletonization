@@ -42,8 +42,10 @@ public class ImageUtils {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				int rgbNewValue = (int) Math.round(coefficient * matrix[i][j]);
-				Color c = new Color(rgbNewValue, rgbNewValue, rgbNewValue);
-				image.setRGB(i, j, c.getRGB());
+				int rgb = rgbNewValue;
+				rgb = (rgb << 8) + rgbNewValue;
+				rgb = (rgb << 8) + rgbNewValue;
+				image.setRGB(i, j, rgb);
 			}
 		}
 	}
