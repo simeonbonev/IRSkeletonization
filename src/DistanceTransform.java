@@ -2,22 +2,19 @@ import java.awt.image.BufferedImage;
 
 public class DistanceTransform {
 
-	public static void doTransform(BufferedImage image, Distance distance) {
+	public static void doTransform(BufferedImage image, Distance distance, Runner runner) {
 		int[][] matrix = ImageUtils.getTrueBinaryImage(image);
 		performDistanceTransform(matrix, image.getWidth(), image.getHeight(),
-				distance);
-		ImageUtils.printMatrix(matrix, image.getWidth(), image.getHeight());
+				distance, runner);
 		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());
-		performErosion(matrix, image.getWidth(), image.getHeight(), distance);
+		performErosion(matrix, image.getWidth(), image.getHeight(), distance, runner);
 		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());
 	}
 
-	private static void performErosion(int[][] matrix, int width, int height, Distance distance) {
-		int counter = 0;
+	private static void performErosion(int[][] matrix, int width, int height, Distance distance, Runner runner) {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				if (matrix[x][y] > 0) {
-					System.out.println(++counter);
 					for (int i = 0; i < width; i++) {
 						for (int j = 0; j < height; j++) {
 							int deltaRadius = matrix[x][y] - matrix[i][j];
@@ -30,21 +27,21 @@ public class DistanceTransform {
 				}
 			}
 		}
+		System.out.println("Done with Erosion.");
 	}
 
 	private static void performDistanceTransform(int[][] matrix, int w, int h,
-			Distance distance) {
-		int counter = 0;
+			Distance distance, Runner runner) {
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
 				if (matrix[i][j] > 0) {
 					// Foreground pixel
 					matrix[i][j] = getClosestBackgroundPixel(i, j, matrix, w,
 							h, distance);
-					System.out.println(++counter);
 				}
 			}
 		}
+		System.out.println("Done with Distance Transform");
 	}
 
 	private static int getClosestBackgroundPixel(int i, int j, int[][] matrix,
@@ -68,7 +65,7 @@ public class DistanceTransform {
 	}
 
 	public static void justDistanceTransform(BufferedImage image, int[][] matrix,
-			Distance distance) {
+			Distance distance, Runner runner) {
 		int[][] currentMatrix = ImageUtils.getTrueBinaryImage(image);
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
@@ -76,12 +73,12 @@ public class DistanceTransform {
 			}
 		}
 		performDistanceTransform(matrix, image.getWidth(), image.getHeight(),
-				distance);		
+				distance, runner);		
 		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());
 	}
 
-	public static void justErode(BufferedImage image, int[][] matrix, Distance distance) {
-		performErosion(matrix, image.getWidth(), image.getHeight(), distance);
+	public static void justErode(BufferedImage image, int[][] matrix, Distance distance, Runner runner) {
+		performErosion(matrix, image.getWidth(), image.getHeight(), distance, runner);
 		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());		
 	}
 }
