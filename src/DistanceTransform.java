@@ -8,6 +8,28 @@ public class DistanceTransform {
 				distance);
 		ImageUtils.printMatrix(matrix, image.getWidth(), image.getHeight());
 		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());
+		performErosion(matrix, image.getWidth(), image.getHeight(), distance);
+		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());
+	}
+
+	private static void performErosion(int[][] matrix, int width, int height, Distance distance) {
+		int counter = 0;
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (matrix[x][y] > 0) {
+					System.out.println(++counter);
+					for (int i = 0; i < width; i++) {
+						for (int j = 0; j < height; j++) {
+							int deltaRadius = matrix[x][y] - matrix[i][j];
+							int dist = (int) distance.getDistance(x, y, i, j);
+							if (deltaRadius >= dist && x!=i && y!=j) {
+								matrix[i][j] = 0;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private static void performDistanceTransform(int[][] matrix, int w, int h,
