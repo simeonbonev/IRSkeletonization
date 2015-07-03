@@ -66,4 +66,22 @@ public class DistanceTransform {
 		}
 		return minDist;
 	}
+
+	public static void justDistanceTransform(BufferedImage image, int[][] matrix,
+			Distance distance) {
+		int[][] currentMatrix = ImageUtils.getTrueBinaryImage(image);
+		for (int i = 0; i < image.getWidth(); i++) {
+			for (int j = 0; j < image.getHeight(); j++) {
+				matrix[i][j] = currentMatrix[i][j];
+			}
+		}
+		performDistanceTransform(matrix, image.getWidth(), image.getHeight(),
+				distance);		
+		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());
+	}
+
+	public static void justErode(BufferedImage image, int[][] matrix, Distance distance) {
+		performErosion(matrix, image.getWidth(), image.getHeight(), distance);
+		ImageUtils.setImageFromMatrix(image, matrix, image.getWidth(), image.getHeight());		
+	}
 }
