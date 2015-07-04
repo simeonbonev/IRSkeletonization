@@ -1,7 +1,11 @@
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -69,5 +73,36 @@ public class ImageUtils {
 			}
 			System.out.println();
 		}
+	}
+
+	public static BufferedImage generateRandom() {
+		BufferedImage result = new BufferedImage(150, 150,
+				BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < 150; i++) {
+			for (int j = 0; j < 150; j++) {
+				result.setRGB(i, j, Color.WHITE.getRGB());
+			}
+		}
+		Graphics2D g2d = result.createGraphics();
+		String[] stringArray = { "a", "b", "c", "d", "e", "f", "g", "h", "i",
+				"j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
+				"v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7",
+				"8", "9", "0" };
+		Color[] colorArray = { Color.red, Color.blue, Color.green, Color.gray,
+				Color.cyan, Color.pink, Color.magenta, Color.orange,
+				Color.yellow };
+		Random rand = new Random();
+		int chosenColor = rand.nextInt(colorArray.length - 1);
+		int chosenChar = rand.nextInt(stringArray.length - 1);
+		g2d.setPaint(colorArray[chosenColor]);
+		g2d.setFont(new Font("Helvetica", Font.BOLD, 100));
+		String s = stringArray[chosenChar];
+		FontMetrics fm = g2d.getFontMetrics();
+		int x = result.getWidth() - fm.stringWidth(s) - 35;
+		int y = fm.getHeight() + 5;
+		g2d.drawString(s, x, y);
+		g2d.dispose();
+
+		return result;
 	}
 }

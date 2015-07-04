@@ -6,9 +6,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -48,21 +49,23 @@ public class Runner extends JFrame implements ActionListener {
 	private ButtonGroup buttonGroup;
 	private JButton chooseFileButton;
 	private JFileChooser jFileChooser;
+	private JButton randomButton;
 
 	Runner(String stringUrl) throws IOException {
 		setPreferredSize(new Dimension(800, 500));
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage("skeletonization.png"));
 		getContentPane().setBackground(Color.WHITE);
-//		URL url = new URL(stringUrl);
-//
-//		originalImage = ImageIO.read(url);
-//		originalImageIcon = new ImageIcon(originalImage);
-//
-//		editedImage = ImageIO.read(url);
-//		editedImageIcon = new ImageIcon(editedImage);
-//
-//		currentMatrix = new int[editedImage.getWidth()][editedImage.getHeight()];
+		// URL url = new URL(stringUrl);
+		//
+		// originalImage = ImageIO.read(url);
+		// originalImageIcon = new ImageIcon(originalImage);
+		//
+		// editedImage = ImageIO.read(url);
+		// editedImageIcon = new ImageIcon(editedImage);
+		//
+		// currentMatrix = new
+		// int[editedImage.getWidth()][editedImage.getHeight()];
 
 		processButton = new JButton("Process");
 		processButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -143,74 +146,172 @@ public class Runner extends JFrame implements ActionListener {
 		erodeButton.setBackground(new Color(255, 215, 0));
 		erodeButton.setOpaque(true);
 		erodeButton.addActionListener(this);
-		
+
 		chooseFileButton = new JButton("Choose file...");
 		chooseFileButton.addActionListener(this);
 		jFileChooser = new JFileChooser();
 
+		randomButton = new JButton("Random");
+		randomButton.addActionListener(this);
+
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(rdbtnManhattan)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(rdbtnEuclidean)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(rdbtnChebyshov)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(chooseFileButton)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(desaturateButton)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(blurButton)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(binarizeButton)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(invertButton)))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(dTransformButton)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(erodeButton)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(processButton, GroupLayout.PREFERRED_SIZE, 106, GroupLayout.PREFERRED_SIZE))
-								.addComponent(editedJLabel, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE))))
-					.addGap(14))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(desaturateButton)
-						.addComponent(blurButton)
-						.addComponent(binarizeButton)
-						.addComponent(invertButton)
-						.addComponent(dTransformButton)
-						.addComponent(erodeButton)
-						.addComponent(processButton))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(rdbtnManhattan)
-						.addComponent(rdbtnEuclidean)
-						.addComponent(rdbtnChebyshov)
-						.addComponent(chooseFileButton)
-						.addComponent(saveButton))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(editedJLabel, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-						.addComponent(originalJLabel, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-					.addContainerGap())
-		);
+		groupLayout
+				.setHorizontalGroup(groupLayout
+						.createParallelGroup(Alignment.LEADING)
+						.addGroup(
+								groupLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.LEADING)
+														.addGroup(
+																groupLayout
+																		.createSequentialGroup()
+																		.addComponent(
+																				rdbtnManhattan)
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addComponent(
+																				rdbtnEuclidean)
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addComponent(
+																				rdbtnChebyshov)
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addComponent(
+																				chooseFileButton)
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addComponent(
+																				saveButton,
+																				GroupLayout.PREFERRED_SIZE,
+																				93,
+																				GroupLayout.PREFERRED_SIZE)
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addComponent(
+																				randomButton))
+														.addGroup(
+																groupLayout
+																		.createSequentialGroup()
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.LEADING,
+																								false)
+																						.addComponent(
+																								originalJLabel,
+																								GroupLayout.DEFAULT_SIZE,
+																								GroupLayout.DEFAULT_SIZE,
+																								Short.MAX_VALUE)
+																						.addGroup(
+																								groupLayout
+																										.createSequentialGroup()
+																										.addComponent(
+																												desaturateButton)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												blurButton)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												binarizeButton)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												invertButton)))
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.LEADING)
+																						.addGroup(
+																								groupLayout
+																										.createSequentialGroup()
+																										.addComponent(
+																												dTransformButton)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												erodeButton)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												processButton,
+																												GroupLayout.PREFERRED_SIZE,
+																												106,
+																												GroupLayout.PREFERRED_SIZE))
+																						.addComponent(
+																								editedJLabel,
+																								GroupLayout.PREFERRED_SIZE,
+																								401,
+																								GroupLayout.PREFERRED_SIZE))))
+										.addGap(14)));
+		groupLayout
+				.setVerticalGroup(groupLayout
+						.createParallelGroup(Alignment.TRAILING)
+						.addGroup(
+								groupLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.BASELINE)
+														.addComponent(
+																desaturateButton)
+														.addComponent(
+																blurButton)
+														.addComponent(
+																binarizeButton)
+														.addComponent(
+																invertButton)
+														.addComponent(
+																dTransformButton)
+														.addComponent(
+																erodeButton)
+														.addComponent(
+																processButton))
+										.addPreferredGap(
+												ComponentPlacement.RELATED)
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.BASELINE)
+														.addComponent(
+																rdbtnManhattan)
+														.addComponent(
+																rdbtnEuclidean)
+														.addComponent(
+																rdbtnChebyshov)
+														.addComponent(
+																chooseFileButton)
+														.addComponent(
+																saveButton)
+														.addComponent(
+																randomButton))
+										.addPreferredGap(
+												ComponentPlacement.RELATED)
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.LEADING)
+														.addComponent(
+																editedJLabel,
+																GroupLayout.DEFAULT_SIZE,
+																395,
+																Short.MAX_VALUE)
+														.addComponent(
+																originalJLabel,
+																GroupLayout.DEFAULT_SIZE,
+																395,
+																Short.MAX_VALUE))
+										.addContainerGap()));
 		getContentPane().setLayout(groupLayout);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -279,6 +380,26 @@ public class Runner extends JFrame implements ActionListener {
 							.copyData(null),
 							editedImage.isAlphaPremultiplied(), null),
 					editedImage);
+		} else if (e.getSource() == randomButton) {
+			BufferedImage newImage = ImageUtils.generateRandom();
+			ColorModel cm = newImage.getColorModel();
+			boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+			WritableRaster raster = newImage.copyData(null);
+			editedImage = new BufferedImage(cm, raster, isAlphaPremultiplied,
+					null);
+			ColorModel cm1 = newImage.getColorModel();
+			boolean isAlphaPremultiplied1 = cm.isAlphaPremultiplied();
+			WritableRaster raster1 = newImage.copyData(null);
+			originalImage = new BufferedImage(cm1, raster1, isAlphaPremultiplied1,
+					null);
+			editedImageIcon = new ImageIcon(editedImage);
+			originalImageIcon = new ImageIcon(originalImage);
+			editedJLabel.setIcon(editedImageIcon);
+			originalJLabel.setIcon(originalImageIcon);
+			
+			currentMatrix = new int[editedImage.getWidth()][editedImage
+			                        						.getHeight()];
+			
 		} else if (e.getSource() == chooseFileButton) {
 			int result = jFileChooser.showOpenDialog(this);
 			if (result == JFileChooser.APPROVE_OPTION) {
@@ -290,7 +411,8 @@ public class Runner extends JFrame implements ActionListener {
 					e1.printStackTrace();
 				}
 				originalImageIcon = new ImageIcon(originalImage);
-				originalJLabel.setIcon(originalImageIcon);;
+				originalJLabel.setIcon(originalImageIcon);
+				
 				try {
 					editedImage = ImageIO.read(imageFile);
 				} catch (IOException e1) {
@@ -300,7 +422,8 @@ public class Runner extends JFrame implements ActionListener {
 				editedImageIcon = new ImageIcon(editedImage);
 				editedJLabel.setIcon(editedImageIcon);
 
-				currentMatrix = new int[editedImage.getWidth()][editedImage.getHeight()];
+				currentMatrix = new int[editedImage.getWidth()][editedImage
+						.getHeight()];
 			}
 		}
 		repaint();
@@ -312,8 +435,8 @@ public class Runner extends JFrame implements ActionListener {
 	}
 
 	private void saveImage(File imageFile) {
-//		File outputFile = new File("IRSkeletonization_"
-//				+ System.currentTimeMillis() + ".jpg");
+		// File outputFile = new File("IRSkeletonization_"
+		// + System.currentTimeMillis() + ".jpg");
 		try {
 			ImageIO.write(editedImage, "jpg", imageFile);
 		} catch (IOException e) {
@@ -334,4 +457,4 @@ public class Runner extends JFrame implements ActionListener {
 			}
 		}
 	}
-	}
+}
